@@ -1,0 +1,34 @@
+package com.claimplat.common.enums;
+
+import java.io.Serializable;
+
+
+/**
+ * 商户状态
+ * @author Joker
+ *
+ */
+public enum MerchantStatusEnum implements Serializable{
+	
+	NORMAL("normal","正常",""),FORBIDDEN("forbidden","禁用","");
+	
+	private String code;
+	private String name;
+	private String desc;
+	
+	private MerchantStatusEnum(String code, String name, String desc) {
+		this.code = code;
+		this.name = name;
+		this.desc = desc;
+	}
+	
+	public String getCode() {
+		return code;
+	}
+	public String getName() {
+		return name;
+	}
+	public String getDesc() {
+		return desc;
+	}
+}
