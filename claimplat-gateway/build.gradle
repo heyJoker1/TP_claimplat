@@ -1,0 +1,63 @@
+buildscript {
+	ext{
+		springBootVersion = '2.1.7.RELEASE'	
+	}
+	repositories {
+		 maven{ url 'http://nexus.d17w.cn:9092/nexus/content/groups/public'}
+		 maven{ url 'http://repo.spring.io/libs-milestone'}
+	}
+	dependencies {
+		classpath ( "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath ( "io.spring.gradle:dependency-management-plugin:1.0.8.RELEASE")
+		classpath ( "com.bmuschko:gradle-cargo-plugin:2.6.1")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+
+group 'com.claimplat'
+version = '1.0.0'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+tasks.withType(JavaCompile){
+	options.encoding = "UTF-8"
+}
+
+def env = System.getProperty("package.environment") ?: "dev"
+
+repositories {
+	maven{ url 'http://nexus.d17w.cn:9092/nexus/content/groups/public'}
+	maven{ url 'http://repo.spring.io/libs-milestone'}
+}
+
+dependencyManagement{
+	imports {
+		mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Greenwich.SR2'
+	}
+}
+
+dependencies {   
+		compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-config'
+		compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client'
+		compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-gateway'
+		compile group: 'org.springframework.boot', name: 'spring-boot-starter-webflux'
+		compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure'
+		compile group: 'org.springframework.boot', name: 'spring-boot-starter-logging'
+		compile group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
+		compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
+		compile group: 'org.springframework.boot', name: 'spring-boot-devtools'
+		
+		compile group: 'com.alibaba.csp', name: 'sentinel-spring-cloud-gateway-adapter', version: '1.6.3'
+		compile group: 'com.alibaba.csp', name: 'sentinel-core', version: '1.6.3'
+		compile group: 'com.alibaba.csp', name: 'sentinel-transport-simple-http', version: '1.6.3'
+		compile group: 'com.alibaba.csp', name: 'sentinel-datasource-extension', version: '1.6.3'
+		
+		compile project(':claimplat-common')
+		testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+		testCompile group: 'junit', name: 'junit'
+}
