@@ -1,0 +1,75 @@
+buildscript {
+	ext{
+		springBootVersion = '2.1.7.RELEASE'	
+	}
+	repositories {
+		 maven{ url 'http://nexus.d17w.cn:9092/nexus/content/groups/public'}
+		 maven{ url 'http://repo.spring.io/libs-milestone'}
+	}
+	dependencies {
+		classpath ( "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath ( "io.spring.gradle:dependency-management-plugin:0.5.1.RELEASE")
+		classpath ( "com.bmuschko:gradle-cargo-plugin:2.6.1")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group 'com.claimplat'
+version = '1.0.0'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+tasks.withType(JavaCompile){
+	options.encoding = "UTF-8"
+}
+
+def env = System.getProperty("package.environment") ?: "dev"
+
+jar{
+	baseName = 'claimplat-admin'
+}
+
+war {
+	enabled = true
+	baseName = 'claimplat-admin'
+	archiveName 'adminapi.war'
+}
+repositories {
+	maven{ url 'http://nexus.d17w.cn:9092/nexus/content/groups/public'}
+	maven{ url 'http://repo.spring.io/libs-milestone'}
+}
+
+dependencies {   
+	compile project(':claimplat-common')
+	compile project(':claimplat-core')
+		
+	compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-logging'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
+	compile group: 'org.springframework.boot', name: 'spring-boot-devtools'	
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-tomcat' 
+	
+	compile group: 'org.hibernate', name: 'hibernate-java8', version: '5.4.4.Final'
+	compile group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.17.Final'
+	compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.8.9'
+	compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.48'
+	compile group: 'com.alibaba', name: 'druid', version: '1.1.19'
+	compile group: 'com.alibaba', name: 'druid-spring-boot-starter', version: '1.1.18'
+	
+	compile group: 'io.springfox', name: 'springfox-swagger2',version:"2.8.0"
+	compile group: 'io.springfox', name: 'springfox-swagger-ui',version:"2.8.0"
+	compile group: 'org.apache.rocketmq', name: 'rocketmq-client',version:"4.3.2"
+	
+	//providedCompile group: 'org.projectlombok', name: 'lombok', version: '1.18.8'
+	testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+	testCompile group: 'junit', name: 'junit'
+}
