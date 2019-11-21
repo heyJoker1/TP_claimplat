@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true" scan="false" scanPeriod="60 secondes">
+
+	<contextName>claimplat-offline</contextName>
+
+	<!--logback存储日志配置-->
+	<appender name="CustomizeAppender" class="com.claimplat.offline.config.RedisAppender">
+	<!--RedisAppender，logback动态连接redis配置  -->
+		<host></host>
+		<port>6379</port>
+		<!-- <password><password> -->
+		<database>8</database>
+		<timeout>50000</timeout>
+		<key>logdata</key>
+		
+		<!--JSONEventLayout，logback存储到redis中的信息标签  -->
+		<layout class="com.claimplat.core.logback.JSONEventLayout">
+			<project>claimplat-offline</project>
+			<env>dev</env>
+		</layout>
+	</appender>
+	<!--异步实现  -->
+	<appender name="logstash" class="ch.qos.logback.classic.AsyncAppender">
+		<discardingThreshold>0</discardingThreshold>
+		<queueSize>256</queueSize>
+		<appender-ref ref="CustomizeAppender"/>
+	</appender>
+
+	<!-- 打印到控制台 -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder charset="UTF-8"> <!--encoder 可以指定字符集，对于中文输出有意义 -->
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<root level="INFO">		
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="CustomizeAppender" />
+	</root>
+
+</configuration>
