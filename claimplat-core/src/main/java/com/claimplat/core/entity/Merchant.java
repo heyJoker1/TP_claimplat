@@ -5,39 +5,46 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 
 import com.claimplat.common.enums.MerchantStatusEnum;
 import com.claimplat.common.enums.ThridpartTypeEnum;
 
+/**
+ * 商户信息
+ * @author Joker
+ *
+ */
 @Entity
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "code" }) })
 public class Merchant extends BaseDateTimeEntity{
 	
 	private static final long serialVersionUID = -3513693057692055410L;
 
-	private String code;
+	private String code;		//商户code，作为路由字段
 	
-	private String name;
+	private String name;		//商户名称
 	
-	private String appKey;
+	private String appKey;		//与商户对应的appKey
 	
-	private String appSecret;
+	private String appSecret;	//签名时使用的appSecret
 	
-	private String telephone;
+	private String telephone;	//联系电话
 	
-	private String email;
+	private String email;		//邮箱
 	
-	private String address;
-	
-	@Enumerated(value = EnumType.STRING)
-	private ThridpartTypeEnum thridpartType;
+	private String address;		//公司地址
 	
 	@Enumerated(value = EnumType.STRING)
-	private MerchantStatusEnum status = MerchantStatusEnum.NORMAL;
+	private ThridpartTypeEnum thridpartType;	//第三方类型标识
 	
-	private String remark;
+	@Enumerated(value = EnumType.STRING)
+	private MerchantStatusEnum status = MerchantStatusEnum.NORMAL;	//状态
 	
-	private Long version = 1L;
+	private String remark;		//备注信息
+	
+	@Version
+	private Long version = 1L;	//乐观锁标识
 
 	public String getCode() {
 		return code;
@@ -56,7 +63,7 @@ public class Merchant extends BaseDateTimeEntity{
 	}
 
 	public String getAppKey() {
-		return appKey;
+		return appKey; 
 	}
 
 	public void setAppKey(String appKey) {

@@ -47,7 +47,7 @@ public class UserService extends BaseService{
 			throw new IllegalStateException("当前账户被锁定！");
 		}
 		
-		if(!user.getPassword().equals(md5Pwd.toUpperCase())) {
+		if(!user.getPasswd().equals(md5Pwd.toUpperCase())) {
 			errorNumber = errorNumber+1;
 			user.setErrorNumber(errorNumber);
 			user.setUpdateDateTime(LocalDateTime.now());
