@@ -1,4 +1,4 @@
-package com.claimplat.adminapi.config.interceptor;
+package com.claimplat.serviceapi.config.interceptor;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -6,27 +6,17 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 public class RequestInterceptor extends HandlerInterceptorAdapter{
+	
 	private static Logger logger = LoggerFactory.getLogger(RequestInterceptor.class);
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		response.addHeader("Access-Control-Allow-Origin", "*");
-		response.addHeader("Access-Control-Allow-Methods", "*");
-		response.addHeader("Access-Control-Allow-Headers", "*");
-		
-		String method = request.getMethod();
-		if(StringUtils.isNotEmpty(method) && method.equalsIgnoreCase("options")) {
-			logger.info("method is options,return false");
-			return false;
-		}
 		
 		if(logger.isDebugEnabled()) {
 			StringBuilder headerSb = new StringBuilder();
@@ -66,5 +56,4 @@ public class RequestInterceptor extends HandlerInterceptorAdapter{
 		}
 		return true;
 	}
-
 }
