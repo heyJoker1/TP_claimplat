@@ -11,7 +11,7 @@ import com.claimplat.common.constant.RestResult;
 
 @RestController
 @RequestMapping(value = "/out")
-public class OutInterfaceRest {
+public class OutInterfaceRest extends BaseRest{
 	
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
