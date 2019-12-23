@@ -9,6 +9,7 @@ import java.io.Serializable;
  */
 public enum ThridpartTypeEnum implements Serializable{
 	SHUT_DI("sit_shui_di","水滴",""),
+	MA_YI("ma_yi","蚂蚁",""),
 	DEFAULT("default","默认","");
 
 	private String code;

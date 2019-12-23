@@ -23,8 +23,11 @@ public class ComponentForwarderFactory {
 	@Resource(name = "shuiDiProcessThridpartComponentForwarder")
 	private ComponentForwarder shuiDiProcessThridpartComponentForwarder;
 	
+	@Resource(name = "dlzThridpartComponentForwarder")
+	private ComponentForwarder dlzThridpartComponentForwarder;
 	
-	
+	@Resource(name = "dlzMaterialThridpartComponentForwarder")
+	private ComponentForwarder dlzMaterialThridpartComponentForwarder;
 	
 	
 	public ComponentForwarder getComponentForwarder(ComponentForwaderTypeEnum type) {
@@ -40,7 +43,11 @@ public class ComponentForwarderFactory {
 			return shuiDiAuditThridpartComponentForwarder;
 		} else if(type == ComponentForwaderTypeEnum.SHUIDI_PROCESS) {
 			return shuiDiProcessThridpartComponentForwarder;
-		} else {
+		} else if(type == ComponentForwaderTypeEnum.DLZ_SEND_INFO) {
+			return dlzThridpartComponentForwarder;
+		} else if(type == ComponentForwaderTypeEnum.DLZ_MATERIAL_INFO) {
+			return dlzMaterialThridpartComponentForwarder;
+		}else {
 			throw new IllegalArgumentException("不支持的type取值："+type);
 		}
 	}

@@ -12,7 +12,9 @@ public enum ComponentForwaderTypeEnum implements Serializable{
 	SEND_AUDIT_INFO("cte_send_audit_info","发起单证审核状态",""),
 	SEND_CASE_STATUS("cte_send_case_status","发起案件状态",""),
 	SHUIDI_AUDIT("cte_shuidi_audit","水滴资料审核",""),
-	SHUIDI_PROCESS("cte_shuidi_process","水滴案件状态同步","");
+	SHUIDI_PROCESS("cte_shuidi_process","水滴案件状态同步",""),
+	DLZ_SEND_INFO("cte_dlz_send_info","顶梁柱案件状态推送",""),
+	DLZ_MATERIAL_INFO("cte_dlz_material_info","顶梁柱单证补传推送","");
 	
 	private String code;
 	
