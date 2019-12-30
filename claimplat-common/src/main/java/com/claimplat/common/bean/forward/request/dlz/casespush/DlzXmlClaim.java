@@ -3,7 +3,7 @@ package com.claimplat.common.bean.forward.request.dlz.casespush;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
-@JacksonXmlRootElement(localName = "claim")
+
 public class DlzXmlClaim {
 
 	@JacksonXmlProperty(localName = "outBizNo")

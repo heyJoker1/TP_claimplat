@@ -12,38 +12,41 @@ public class DlzCasesForwardRequest extends BaseThridpartForwardRequest{
 
 	private static final long serialVersionUID = 1L;
 
-	private String claimStatus;
-	private String claimAdjustmenttype;
+	//状态判断
+	private String claimStatus;				//1-已结案，2-销案
+	private String claimAdjustmenttype;		//3-拒赔，7-零结，1-正常案件
 	
-	private String outBizNo; 
-	private String reportNo;
-	private String outReportNo;
-	private String policyNo;
-	private String outPolicyNo;
-	private String outClaimNo;
-	private String claimFee;
-	private Date claimSuccessTime;
-	private Date claimAssessTime;
-	private Date claimRecordTime;
-	private Date accidentTime;
-	private String claimAccidentType;
-	private String outercode;
-	private String outercodetype;
-	private String totalFee;
-	private String compensationfee;
-	private String insocialsecurityfee;
-	private String outsocialsecurityfee;	
-	private String unreasonablefee;
-	private String assessclaimfee;
-	private String claimPaidamount;
-	private String deductibleFee;
-	private String paymentRatio;
-	private String overDeductibleFee;
-	private String totalDeductibleFee;
+	//正常结案
+	private String outBizNo; 				//幂等单号
+	private String reportNo;				//保险平台报案号（外部）
+	private String outReportNo;				//保险公司报案号（太平）
+	private String policyNo;				//保险平台保单号
+	private String outPolicyNo;				//保险公司保单号
+	private String outClaimNo;				//保险公司赔案号
+	private String claimFee;				//赔付金额
+	private String claimSuccessTime;			//结案时间
+	private String claimAssessTime;			//核赔时间
+	private String claimRecordTime;			//立案时间
+	private String accidentTime;				//出险时间
+	private String claimAccidentType;		//出险原因（类型）
+	private String outercode;				//险别代码
+	private String outercodetype;			//险别名称
+	private String totalFee;				//账单总金额
+	private String compensationfee;			//补偿金额
+	private String insocialsecurityfee;		//社保内费用
+	private String outsocialsecurityfee;	//社保外费用
+	private String unreasonablefee;			//不合理费用
+	private String assessclaimfee;			//理赔金额
+	private String claimPaidamount;			//实际赔付金额
+	private String deductibleFee;			//当前责任免赔额
+	private String paymentRatio;			//给付比率
+	private String overDeductibleFee;		//累计免赔额上限
+	private String totalDeductibleFee;		//责任历史累计免赔额
 	
-	private String denyreasonname;
-	private String zerocasereasonname;
-	private String applyreasonname;
+	/*其它结案*/
+	private String denyreasonname;			//拒赔原因
+	private String zerocasereasonname;		//零赔原因
+	private String applyreasonname;			//销案原因
 	
 	
 	public String getClaimStatus() {
@@ -100,28 +103,28 @@ public class DlzCasesForwardRequest extends BaseThridpartForwardRequest{
 	public void setClaimFee(String claimFee) {
 		this.claimFee = claimFee;
 	}
-	public Date getClaimSuccessTime() {
+	public String getClaimSuccessTime() {
 		return claimSuccessTime;
 	}
-	public void setClaimSuccessTime(Date claimSuccessTime) {
+	public void setClaimSuccessTime(String claimSuccessTime) {
 		this.claimSuccessTime = claimSuccessTime;
 	}
-	public Date getClaimAssessTime() {
+	public String getClaimAssessTime() {
 		return claimAssessTime;
 	}
-	public void setClaimAssessTime(Date claimAssessTime) {
+	public void setClaimAssessTime(String claimAssessTime) {
 		this.claimAssessTime = claimAssessTime;
 	}
-	public Date getClaimRecordTime() {
+	public String getClaimRecordTime() {
 		return claimRecordTime;
 	}
-	public void setClaimRecordTime(Date claimRecordTime) {
+	public void setClaimRecordTime(String claimRecordTime) {
 		this.claimRecordTime = claimRecordTime;
 	}
-	public Date getAccidentTime() {
+	public String getAccidentTime() {
 		return accidentTime;
 	}
-	public void setAccidentTime(Date accidentTime) {
+	public void setAccidentTime(String accidentTime) {
 		this.accidentTime = accidentTime;
 	}
 	public String getClaimAccidentType() {

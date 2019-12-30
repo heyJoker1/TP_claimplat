@@ -82,8 +82,12 @@ public class DlzTaskService extends BaseService{
 
 						content.put("outClaimNo",dlzThridpartEntity.getRegistno());
 
-						content.put("claimFee",dlzThridpartEntity.getSumpaid());
-						//将date转换成yyyyMMddHHmmss格式
+						//将金额“元”换算成“分”单位
+						Double claimFeeDouble= Double.valueOf(dlzThridpartEntity.getSumpaid());
+						Long claimFee = (long) (claimFeeDouble*100);
+						content.put("claimFee",claimFee);
+						
+						//将date转换成"yyyyMMddHHmmss"格式
 						String successTime = new SimpleDateFormat("yyyyMMddHHmmss").format(dlzThridpartEntity.getEndcasedate());
 						content.put("claimSuccessTime",successTime);
 
@@ -109,29 +113,52 @@ public class DlzTaskService extends BaseService{
 
 						content.put("outPolicyNo",dlzAdjustDetailsEntity.getPolicyno());
 
-						content.put("totalFee",dlzAdjustDetailsEntity.getTotalFee());
+						//将金额“元”换算成“分”单位
+						Double totalDouble= Double.valueOf(dlzAdjustDetailsEntity.getTotalFee());
+						Long totalFee = (long) (totalDouble*100);
+						content.put("totalFee",totalFee);
 
-						content.put("compensationfee",dlzAdjustDetailsEntity.getCompensationfee());
+						Double compenDouble= Double.valueOf(dlzAdjustDetailsEntity.getCompensationfee());
+						Long compensationfee = (long) (compenDouble*100);
+						content.put("compensationfee",compensationfee);
 
-						content.put("insocialsecurityfee",dlzAdjustDetailsEntity.getInsocialsecurityfee());
+						Double insocialDouble= Double.valueOf(dlzAdjustDetailsEntity.getInsocialsecurityfee());
+						Long insocialsecurityfee = (long) (insocialDouble*100);
+						content.put("insocialsecurityfee",insocialsecurityfee);
 
-						content.put("outsocialsecurityfee",dlzAdjustDetailsEntity.getOutsocialsecurityfee());
+						Double outsocialDouble= Double.valueOf(dlzAdjustDetailsEntity.getOutsocialsecurityfee());
+						Long outsocialsecurityfee = (long) (outsocialDouble*100);
+						content.put("outsocialsecurityfee",outsocialsecurityfee);
 
-						content.put("unreasonablefee",dlzAdjustDetailsEntity.getUnreasonablefee());
+						Double unreasonDouble= Double.valueOf(dlzAdjustDetailsEntity.getUnreasonablefee());
+						Long unreasonablefee = (long) (unreasonDouble*100);
+						content.put("unreasonablefee",unreasonablefee);
 
-						content.put("assessclaimfee",dlzAdjustDetailsEntity.getAssessclaimfee());
+						Double assessDouble= Double.valueOf(dlzAdjustDetailsEntity.getAssessclaimfee());
+						Long assessclaimfee = (long) (assessDouble*100);
+						content.put("assessclaimfee",assessclaimfee);
 
-						content.put("claimPaidamount",dlzAdjustDetailsEntity.getPaidamount());
+						Double claimPaidDouble= Double.valueOf(dlzAdjustDetailsEntity.getPaidamount());
+						Long claimPaidamount = (long) (claimPaidDouble*100);
+						content.put("claimPaidamount",claimPaidamount);
 
-						content.put("deductibleFee",dlzAdjustDetailsEntity.getDeductible());
+						Double deducDouble= Double.valueOf(dlzAdjustDetailsEntity.getDeductible());
+						Long deductibleFee = (long) (deducDouble*100);
+						content.put("deductibleFee",deductibleFee);
 
-						content.put("paymentRatio",dlzAdjustDetailsEntity.getClaimreate());
+						Double paymentDouble= Double.valueOf(dlzAdjustDetailsEntity.getClaimreate());
+						Long paymentRatio = (long) (paymentDouble*100);
+						content.put("paymentRatio",paymentRatio);
 
-						content.put("overDeductibleFee",dlzAdjustDetailsEntity.getOverDeductibleFee());
+						Double overDouble= Double.valueOf(dlzAdjustDetailsEntity.getOverDeductibleFee());
+						Long overDeductibleFee = (long) (overDouble*100);
+						content.put("overDeductibleFee",overDeductibleFee);
 
 						//根据报案号与gcpersonhurtadjustment表中的险别查询出责任历史累计免赔额
 						DlzAdjustDetailsEntity disteributeind = dlzThridpartDaoImpl.getTotalDeductibleFee(gcClaimThirdinfoTask.getRegistNo());
-						content.put("totalDeductibleFee",disteributeind.getTotalDeductibleFee());
+						Double totalDeducDouble= Double.valueOf(dlzAdjustDetailsEntity.getTotalDeductibleFee());
+						Long totalDeductibleFee = (long) (totalDeducDouble*100);
+						content.put("totalDeductibleFee",totalDeductibleFee);
 
 					}
 				}

@@ -2,6 +2,7 @@ package com.claimplat.common.bean.forward.request.dlz.materialpush;
 
 import java.util.List;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
@@ -18,7 +19,8 @@ public class DlzMaterialXmlBody {
 	private String outReportNo; 	//保险公司报案号
 	
 	@JacksonXmlProperty(localName = "policies")
-	private List<DlzMaterialXmlPolicy> policies; 	//保单列表
+	@JacksonXmlElementWrapper(useWrapping = false)
+	private List<DlzMaterialXmlPolicies> policies; 		//保单列表
 	
 	@JacksonXmlProperty(localName = "action")
 	private String action;
@@ -56,11 +58,11 @@ public class DlzMaterialXmlBody {
 		this.outReportNo = outReportNo;
 	}
 
-	public List<DlzMaterialXmlPolicy> getPolicies() {
+	public List<DlzMaterialXmlPolicies> getPolicies() {
 		return policies;
 	}
 
-	public void setPolicies(List<DlzMaterialXmlPolicy> policies) {
+	public void setPolicies(List<DlzMaterialXmlPolicies> policies) {
 		this.policies = policies;
 	}
 

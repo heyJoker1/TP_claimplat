@@ -1,7 +1,5 @@
 package com.claimplat.common.bean.forward.request.dlz.casespush;
 
-import java.util.List;
-
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
@@ -15,7 +13,7 @@ public class DlzXmlBody {
 	private String outReportNo;			//保险公司报案号
 	
 	@JacksonXmlProperty(localName = "claims")
-	private List<DlzXmlClaim> claims;	//赔案信息
+	private DlzXmlClaims claims;		//赔案信息
 
 	public String getReportNo() {
 		return reportNo;
@@ -33,11 +31,11 @@ public class DlzXmlBody {
 		this.outReportNo = outReportNo;
 	}
 
-	public List<DlzXmlClaim> getClaims() {
+	public DlzXmlClaims getClaims() {
 		return claims;
 	}
 
-	public void setClaims(List<DlzXmlClaim> claims) {
+	public void setClaims(DlzXmlClaims claims) {
 		this.claims = claims;
 	}
 	

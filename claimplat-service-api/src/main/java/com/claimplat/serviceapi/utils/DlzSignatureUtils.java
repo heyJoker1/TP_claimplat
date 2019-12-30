@@ -44,6 +44,7 @@ public class DlzSignatureUtils {
 			signature.initSign(Key);
 			signature.update(data);
 			return signature.sign();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

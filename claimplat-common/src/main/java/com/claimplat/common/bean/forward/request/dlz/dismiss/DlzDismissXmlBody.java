@@ -2,7 +2,9 @@ package com.claimplat.common.bean.forward.request.dlz.dismiss;
 
 import java.util.List;
 
+import com.claimplat.common.bean.forward.request.dlz.materialpush.DlzMaterialXmlPolicies;
 import com.claimplat.common.bean.forward.request.dlz.materialpush.DlzMaterialXmlPolicy;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
@@ -19,7 +21,8 @@ public class DlzDismissXmlBody {
 	private String outReportNo; 	//保险公司报案号
 	
 	@JacksonXmlProperty(localName = "policies")
-	private List<DlzMaterialXmlPolicy> policies; 	//保单列表
+	@JacksonXmlElementWrapper(useWrapping = false)
+	private List<DlzMaterialXmlPolicies> policies; 		//保单列表
 	
 	@JacksonXmlProperty(localName = "action")
 	private String action;
@@ -57,11 +60,11 @@ public class DlzDismissXmlBody {
 		this.outReportNo = outReportNo;
 	}
 
-	public List<DlzMaterialXmlPolicy> getPolicies() {
+	public List<DlzMaterialXmlPolicies> getPolicies() {
 		return policies;
 	}
 
-	public void setPolicies(List<DlzMaterialXmlPolicy> policies) {
+	public void setPolicies(List<DlzMaterialXmlPolicies> policies) {
 		this.policies = policies;
 	}
 

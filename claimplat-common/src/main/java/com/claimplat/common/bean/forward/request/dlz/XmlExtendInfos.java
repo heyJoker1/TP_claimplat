@@ -3,7 +3,6 @@ package com.claimplat.common.bean.forward.request.dlz;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
-@JacksonXmlRootElement(localName = "extendInfos")
 public class XmlExtendInfos {
 
 	@JacksonXmlProperty(localName = "key",isAttribute = true)

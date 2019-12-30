@@ -1,16 +1,25 @@
 package com.claimplat.serviceapi.componentforward.dlz;
 
+import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSONObject;
 import com.claimplat.common.bean.forward.request.dlz.XmlExtendInfo;
 import com.claimplat.common.bean.forward.request.dlz.XmlExtendInfos;
 import com.claimplat.common.bean.forward.request.dlz.XmlHead;
@@ -20,6 +29,7 @@ import com.claimplat.common.bean.forward.request.dlz.casespush.DlzXmlActionConte
 import com.claimplat.common.bean.forward.request.dlz.materialpush.DlzMaterialXmlActionContext;
 import com.claimplat.common.bean.forward.request.dlz.materialpush.DlzMaterialXmlBody;
 import com.claimplat.common.bean.forward.request.dlz.materialpush.DlzMaterialXmlData;
+import com.claimplat.common.bean.forward.request.dlz.materialpush.DlzMaterialXmlPolicies;
 import com.claimplat.common.bean.forward.request.dlz.materialpush.DlzMaterialXmlPolicy;
 import com.claimplat.common.bean.forward.request.dlz.materialpush.DlzMaterialXmlRequest;
 import com.claimplat.common.bean.forward.request.dlz.receive.DlzCasesForwardRequest;
@@ -30,10 +40,12 @@ import com.claimplat.core.entity.MerchantUrlConfig;
 import com.claimplat.serviceapi.componentforward.BaseThridpartComonentForwarder;
 import com.claimplat.serviceapi.componentforward.bean.ForwardContext;
 import com.claimplat.serviceapi.utils.DlzSignUtils;
+import com.claimplat.serviceapi.utils.RSA;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.sun.jersey.core.util.Base64;
 
 @Transactional
 @Component(value = "dlzMaterialThridpartComponentForwarder")
@@ -82,11 +94,13 @@ public class dlzMaterialThridpartComponentForwarder  extends BaseThridpartComone
 			xmlBody.setReportNo(request.getReportNo());
 			xmlBody.setOutReportNo(request.getOutReportNo());
 			
-			List<DlzMaterialXmlPolicy> policyList = new ArrayList<DlzMaterialXmlPolicy>();
+			List<DlzMaterialXmlPolicies> policyList = new ArrayList<DlzMaterialXmlPolicies>();
+			DlzMaterialXmlPolicies policies = new DlzMaterialXmlPolicies();
 			DlzMaterialXmlPolicy policy = new DlzMaterialXmlPolicy();
 			policy.setPolicyNo(request.getPolicyNo());
 			policy.setOutPolicyNo(request.getOutPolicyNo());
-			policyList.add(policy);
+			policies.setPolicy(policy);
+			policyList.add(policies);
 			xmlBody.setPolicies(policyList);
 			
 			xmlBody.setAction("10");
@@ -127,38 +141,91 @@ public class dlzMaterialThridpartComponentForwarder  extends BaseThridpartComone
 			
 			xmlRequest.setBody(xmlBody);
 			
-			//加签
-			DlzSignUtils.init(publicKey4RSA,privateKey4RSA,null);
-			String sign = DlzSignUtils.sign(xmlRequest.toString());
-
-			xmlData.setSignature(sign);
-			xmlData.setXmlRequest(xmlRequest);
-
-			/*转成xml格式*/
+			//-----------------------------------------对request节点下内容加签--------------------------------------
 			ObjectMapper xmlMapper = new XmlMapper();						
-			xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);			
-			xmlMapper.setSerializationInclusion(Include.NON_NULL);			
-			String content = xmlMapper.writeValueAsString(xmlData);			
+			xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);			//自动优化格式
+			xmlMapper.setSerializationInclusion(Include.NON_NULL);			//自动忽略无值字段
 
-			HttpEntity<String> materialEntity = new HttpEntity<>(content);
-			logger.info("推送外部第三方系统的报文={}",materialEntity);
+			try {
+				String signStr = xmlMapper.writeValueAsString(xmlRequest);	//转xml格式
+				signStr.replace("<DlzMaterialXmlRequest>", "");
+				signStr.replace("</DlzMaterialXmlRequest>", "");
+				logger.info("待加签数据={}",signStr);
+				
+				String encode = new String(Base64.encode(signStr.getBytes("utf-8")));
+				String sign = RSA.sign(encode,privateKey4RSA);
 
-			/*此entity映射Merchant_url_cnfig表，推送外部第三方系统时需要在此表中手动添加地址*/
-			MerchantUrlConfig urlConfig = fetchUrlConfig(merchant.getCode(),BusinessForwardTypeEnum.DLZ_MATERIAL_INFO);
+				xmlData.setSignature(sign);
+				xmlData.setXmlRequest(xmlRequest);
 
-			String result = restTemplateWithProxy.postForObject(urlConfig.getUrl(), materialEntity, String.class);
+				String content = xmlMapper.writeValueAsString(xmlData);
+				logger.info("推送外部第三方系统的报文内容={}",content);
 
-			context.getTempDateMap().put("result",result);
+				//http协议传输得头部信息
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_XML);
+				headers.add("Accept", MediaType.APPLICATION_XML_VALUE);
+				headers.add("Accept-Charset", "utf-8");
+
+				HttpEntity<String> normalEntity = new HttpEntity<>(content,headers);
+				logger.info("Http协议传输内容={}",normalEntity);
+				MerchantUrlConfig urlConfig = fetchUrlConfig(merchant.getCode(),BusinessForwardTypeEnum.DLZ_MATERIAL_INFO);
+
+				//推送
+				String result = restTemplateWithProxy.postForObject(urlConfig.getUrl(), normalEntity, String.class);
+				logger.info("回调报文={}",result);
+
+				//-----------------------------------------解析xml--------------------------------------
+				SAXReader saxReader = new SAXReader();
+				ByteArrayInputStream resultByte = new ByteArrayInputStream(result.getBytes());
+
+				//获取xml报文中结构节点下success、errorCode、errorMessage标签中的内容,并添加到map中
+				Document docement = saxReader.read(resultByte);
+				Element rootElement = docement.getRootElement();
+				Element repsonseElement = rootElement.element("repsonse");
+				Element bodyElement = repsonseElement.element("body");
+
+				Element successElement = bodyElement.element("success");
+				Element errorElement = bodyElement.element("errorCode");
+				Element errorMessageElement = bodyElement.element("errorMessage");
+
+				context.getTempDateMap().put("success",successElement);
+				context.getTempDateMap().put("errorCode",errorElement);
+				context.getTempDateMap().put("errorMessage",errorMessageElement);
+
+				//-----------------------------------------签名验证--------------------------------------
+				logger.info("开始签名验证！");
+				String sigetrue = result.substring(result.indexOf("<signature>")+11,result.lastIndexOf("</signature>"));
+				String waitContext = result.substring(result.indexOf("<response>")+10,result.lastIndexOf("</response>"));
+				
+				if(!RSA.checkSign(new String(Base64.encode(waitContext.getBytes("UTF-8"))), sigetrue, privateKey4RSA)) {
+					throw new IllegalArgumentException("签名验证失败");
+				}
+				logger.info("签名验证成功！");
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		
 	}
 
+	
+	/**
+	 *取出推送外部第三方返回的信息，已作map处理的数据
+	 */
 	@Override
 	protected void generateResponse(ForwardContext context) {
-		// TODO Auto-generated method stub
+		Map<String, Object> tempDateMap = context.getTempDateMap();
+		JSONObject jsonObject = new JSONObject();
+		jsonObject = new JSONObject(tempDateMap);
+		
+		if(StringUtils.isEmpty(jsonObject.toString())) {
+			throw new IllegalStateException("调用外部第三方系统出错");
+		}
 		
 	}
 

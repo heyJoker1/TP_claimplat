@@ -3,7 +3,7 @@ package com.claimplat.common.bean.forward.request.dlz.materialpush;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
-@JacksonXmlRootElement(localName = "policy")
+
 public class DlzMaterialXmlPolicy {
 
 	@JacksonXmlProperty(localName = "policyNo")
