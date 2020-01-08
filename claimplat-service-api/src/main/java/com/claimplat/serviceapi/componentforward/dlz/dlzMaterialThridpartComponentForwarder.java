@@ -19,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.claimplat.common.bean.forward.request.dlz.XmlExtendInfo;
 import com.claimplat.common.bean.forward.request.dlz.XmlExtendInfos;
@@ -186,12 +187,15 @@ public class dlzMaterialThridpartComponentForwarder  extends BaseThridpartComone
 				Element bodyElement = repsonseElement.element("body");
 
 				Element successElement = bodyElement.element("success");
+				String successValue = successElement.getStringValue();
 				Element errorElement = bodyElement.element("errorCode");
+				String errorValue = errorElement.getStringValue();
 				Element errorMessageElement = bodyElement.element("errorMessage");
+				String errorMessageValue = errorMessageElement.getStringValue();
 
-				context.getTempDateMap().put("success",successElement);
-				context.getTempDateMap().put("errorCode",errorElement);
-				context.getTempDateMap().put("errorMessage",errorMessageElement);
+				context.getTempDateMap().put("success",successValue);
+				context.getTempDateMap().put("errorCode",errorValue);
+				context.getTempDateMap().put("errorMessage",errorMessageValue);
 
 				//-----------------------------------------签名验证--------------------------------------
 				logger.info("开始签名验证！");
@@ -220,10 +224,9 @@ public class dlzMaterialThridpartComponentForwarder  extends BaseThridpartComone
 	@Override
 	protected void generateResponse(ForwardContext context) {
 		Map<String, Object> tempDateMap = context.getTempDateMap();
-		JSONObject jsonObject = new JSONObject();
-		jsonObject = new JSONObject(tempDateMap);
+		String jsonString = JSONUtils.toJSONString(tempDateMap);
 		
-		if(StringUtils.isEmpty(jsonObject.toString())) {
+		if(StringUtils.isEmpty(jsonString)) {
 			throw new IllegalStateException("调用外部第三方系统出错");
 		}
 		

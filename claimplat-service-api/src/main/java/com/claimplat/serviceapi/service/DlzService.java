@@ -1,5 +1,7 @@
 package com.claimplat.serviceapi.service;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
@@ -38,6 +40,13 @@ public class DlzService extends BaseService{
 			ForwardContext context = new ForwardContext();
 			context.setMerchant(merchant);
 			context.setRequest(request);
+			
+			Map<String, Object> tempDateMap = context.getTempDateMap();
+			Object success = tempDateMap.get("success");
+			if(!success.equals("1")) {
+				throw new IllegalArgumentException("蚂蚁-顶梁柱案件状态success信息异常");
+			}
+			
 			
 			ComponentForwarder componentForwarder = componentForwarderFactory.getComponentForwarder(ComponentForwaderTypeEnum.DLZ_SEND_INFO);
 			componentForwarder.execute(context);
