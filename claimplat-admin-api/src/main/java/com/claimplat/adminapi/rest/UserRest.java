@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.claimplat.adminapi.service.UserService;
+import com.claimplat.adminapi.vo.LoginVo;
 import com.claimplat.common.constant.RestResult;
+import com.claimplat.common.enums.UserPwdStatusEnum;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -33,9 +35,16 @@ public class UserRest extends BaseRest{
 	public RestResult login(@ApiParam(value = "用户名", required = true) @RequestParam(value = "userName") String userName,
 			@ApiParam(value = "密码", required = true) @RequestParam(value = "password")String password,
 			HttpServletResponse response,HttpServletRequest request) {
+		
 		String token = userService.login(userName,password,request);
+		
+		UserPwdStatusEnum status = userService.isFlagUpdatePwd(userName);
+		
+		LoginVo loginVo = new LoginVo(status,token);
+		
 		RestResult restResult = new RestResult();
-		restResult.setData(token);
+		restResult.setData(loginVo);
+		
 		return restResult;
 	}
 	
@@ -48,9 +57,51 @@ public class UserRest extends BaseRest{
 	@ApiOperation(value = "注销",httpMethod = "POST")
 	@ApiImplicitParam(name = "token",paramType = "header")
 	public RestResult logout(HttpServletRequest request) {
+		
 		RestResult restResult = new RestResult();
+		
 		String token = request.getHeader("token");
 		userService.logout(token);
+		return restResult;
+	}
+	
+	
+	
+	/**
+	 * 验证密码
+	 */
+	@PostMapping("/checkPassword")
+	@ApiOperation(value = "checkPassword", httpMethod = "POST")
+	@ApiImplicitParam(name = "token",paramType = "header")
+	public RestResult checkPassword(@ApiParam(value = "密码", required = true) @RequestParam(value = "password")String password,
+			HttpServletResponse response,HttpServletRequest request) {
+		
+		RestResult restResult = new RestResult();
+		
+		String token = request.getHeader("token");
+		
+		userService.checkPassword(token,password);
+		
+		return restResult;
+	}
+	
+	
+	
+	/**
+	 * 修改密码
+	 */
+	@PostMapping("/updatePassword")
+	@ApiOperation(value = "updatePassword", httpMethod = "POST")
+	@ApiImplicitParam(name = "token",paramType = "header")
+	public RestResult updatePassword(@ApiParam(value = "密码", required = true) @RequestParam(value = "password")String password,
+			HttpServletResponse response,HttpServletRequest request) {
+		
+		RestResult restResult = new RestResult();
+		
+		String token = request.getHeader("token");
+		
+		userService.updatePassword(token,password);
+		
 		return restResult;
 	}
 }

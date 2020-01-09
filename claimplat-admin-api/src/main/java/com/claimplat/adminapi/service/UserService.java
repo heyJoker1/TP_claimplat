@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.claimplat.adminapi.repository.UserRepository;
+import com.claimplat.common.enums.UserPwdStatusEnum;
 import com.claimplat.common.enums.UserStatusEnum;
 import com.claimplat.core.entity.User;
 
@@ -72,6 +73,25 @@ public class UserService extends BaseService{
 		return token;
 	}
 
+	public UserPwdStatusEnum isFlagUpdatePwd(String userName) {
+		User user = userRepository.findByName(userName);
+		LocalDateTime upPwdTime = user.getUpdatePwdDateTime();
+		if(upPwdTime == null) {
+			return UserPwdStatusEnum.INFO;
+		}else {
+			LocalDateTime now = LocalDateTime.now();
+			long between = ChronoUnit.DAYS.between(upPwdTime, now);
+			if(between <= 85) {
+				return UserPwdStatusEnum.NORMAL;
+			}else if(between > 85 && between <= 90) {
+				return UserPwdStatusEnum.WARRING;
+			}else {
+				return UserPwdStatusEnum.FORBIDDEN;
+			}
+		}
+	}
+	
+	
 	/**
 	 * redis中移除当前登录状态
 	 * @param token
@@ -79,5 +99,41 @@ public class UserService extends BaseService{
 	public void logout(String token) {
 		redisTemplate.delete(token);
 	}
+
+	
+	
+	/**
+	 * 验证密码
+	 */
+	public void checkPassword(String token, String password) {
+		Long userId = (Long) redisTemplate.boundValueOps(token).get();
+		User user = userRepository.findByIdEquals(userId);
+		if(!user.getPasswd().equals(password)) {
+			throw new IllegalArgumentException("旧密码错误！");
+		}
+	}
+
+	/**
+	 * 修改密码
+	 */
+	public void updatePassword(String token, String password) {
+		
+		try {
+			
+			Long userId = (Long) redisTemplate.boundValueOps(token).get();
+			User user = userRepository.findByIdEquals(userId);
+			user.setPasswd(password);
+			user.setUpdatePwdDateTime(LocalDateTime.now());
+			userRepository.save(user);
+			
+		} catch (IllegalStateException e) {
+			throw new IllegalStateException("删除失败！",e);
+		} catch (Exception e) {
+			throw e;
+		}
+		
+	}
+
+
 	
 }

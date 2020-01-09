@@ -10,4 +10,6 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long>{
 
 	User findByName(String userName);
 
+	User findByIdEquals(Long userId);
+
 }

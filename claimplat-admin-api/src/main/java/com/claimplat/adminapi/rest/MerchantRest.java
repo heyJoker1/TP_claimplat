@@ -3,6 +3,7 @@ package com.claimplat.adminapi.rest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.claimplat.adminapi.service.MerchantService;
@@ -54,7 +55,7 @@ public class MerchantRest {
 	@ApiOperation(value = "查询商户详情", httpMethod = "POST")
 	@ApiImplicitParam(name = "token", paramType = "header")
 	@PostMapping("/getMerchantDetails")	
-	public RestResult getMerchantDetails(@ApiParam(value = "商户code") @RequestBody String code) {
+	public RestResult getMerchantDetails(@ApiParam(value = "商户code") @RequestParam String code) {
 		Merchant merchant = merchantService.getMerchantDetails(code);
 		RestResult restResult = new RestResult();
 		restResult.setData(merchant);
